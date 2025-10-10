@@ -37,21 +37,28 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: "${SONAR_CREDENTIALS}", variable: 'SONAR_TOKEN')]) {
                     script {
-                        def services = ["eureka-service", "user-service", "formation-service"]
+                        // Liste des services avec leurs chemins exacts
+                        def services = [
+                            [name: "eureka-service", path: "Eureka-Server"],
+                            [name: "user-service", path: "User-Service"],
+                            [name: "formation-service", path: "Formation-Service"]
+                        ]
+
                         for (s in services) {
-                            dir("backend/${s}") {
+                            dir("backend/stage-ete-main/${s.path}") {
                                 sh """
                                 mvn -B sonar:sonar \
-                                  -Dsonar.projectKey=${s} \
-                                  -Dsonar.host.url=${SONAR_HOST} \
-                                  -Dsonar.login=${SONAR_TOKEN}
+                                -Dsonar.projectKey=${s.name} \
+                                -Dsonar.host.url=${SONAR_HOST} \
+                                -Dsonar.login=${SONAR_TOKEN}
                                 """
                             }
                         }
                     }
                 }
             }
-        }
+}
+
 
         stage('Build Artifacts (.jar)') {
             steps {
