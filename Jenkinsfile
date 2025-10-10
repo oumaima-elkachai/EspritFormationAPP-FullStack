@@ -21,9 +21,10 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 script {
-                    def services = ["eureka-service", "user-service", "formation-service"]
+                    def services = ["Eureka-Server","User-Service","Formation-Service"]
+
                     for (s in services) {
-                        dir("backend/${s}") {
+                        dir("backend/stage-ete-main/${s}") {
                             echo "🔍 Running unit tests for ${s}"
                             sh 'mvn -B clean test'
                         }
