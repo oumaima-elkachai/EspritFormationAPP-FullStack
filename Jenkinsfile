@@ -4,9 +4,8 @@ pipeline {
     environment {
         GITHUB_CREDENTIALS = 'github-token'
         SONAR_CREDENTIALS  = 'sonar-token'
-        DOCKER_CREDENTIALS = 'dockerhub-credentials'
-        SONAR_HOST         = 'http://SONAR_SERVER:9000'     // remplace par ton serveur Sonar
-        IMAGE_NAMESPACE    = 'oumaimaelkachai'               // ton DockerHub username
+        SONAR_HOST = 'http://192.168.6.161:9000'
+        IMAGE_NAMESPACE    = 'oumaimaelkachai'              
     }
 
     stages {
@@ -63,9 +62,9 @@ pipeline {
         stage('Build Artifacts (.jar)') {
             steps {
                 script {
-                    def services = ["eureka-service", "user-service", "formation-service"]
+                    def services = ["Eureka-Server", "User-Service", "Formation-Service"]
                     for (s in services) {
-                        dir("backend/${s}") {
+                        dir("backend/stage-ete-main/${s}") {
                             echo "⚙️ Building ${s}"
                             sh 'mvn -B clean package -DskipTests'
                         }
@@ -83,10 +82,10 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin'
 
-                        def services = ["eureka-service", "user-service", "formation-service"]
+                        def services = ["Eureka-Server", "User-Service", "Formation-Service"]
                         for (s in services) {
                             sh """
-                            docker build -t $DOCKER_USER/${s}:${IMAGE_TAG} -t $DOCKER_USER/${s}:latest -f backend/${s}/Dockerfile backend/${s}
+                            docker build -t $DOCKER_USER/${s}:${IMAGE_TAG} -t $DOCKER_USER/${s}:latest -f backend/stage-ete-main/${s}/Dockerfile backend/stage-ete-main/${s}
                             docker push $DOCKER_USER/${s}:${IMAGE_TAG}
                             docker push $DOCKER_USER/${s}:latest
                             """
