@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: o
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ""
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  eureka-service:
+    image: "${DOCKER_USER}/eureka-service:${IMAGE_TAG}"
+    container_name: eureka-service
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_APPLICATION_NAME=EurekaServer
+      - SERVER_PORT=8761
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false
+      - EUREKA_CLIENT_FETCH_REGISTRY=false
+    depends_on:
+      - mysql
+
+  formation-service:
+    image: "${DOCKER_USER}/formation-service:${IMAGE_TAG}"
+    container_name: formation-service
+    ports:
+      - "9094:9094"
+    environment:
+      - SPRING_APPLICATION_NAME=Formation-Service
+      - SERVER_PORT=9094
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/o?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-service:8761/eureka
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - EUREKA_INSTANCE_PREFER_IPADDRESS=true
+    depends_on:
+      - mysql
+      - eureka-service
+
+  user-service:
+    image: "${DOCKER_USER}/user-service:${IMAGE_TAG}"
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_APPLICATION_NAME=Auth
+      - SERVER_PORT=8081
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/o?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-service:8761/eureka
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_WEB_CORS_ALLOWED_ORIGINS=http://localhost:4200
+      - SPRING_WEB_CORS_ALLOWED_METHODS=GET,POST,PUT,DELETE,OPTIONS
+      - SPRING_WEB_CORS_ALLOWED_HEADERS=*
+      - SPRING_WEB_CORS_ALLOW_CREDENTIALS=true
+    depends_on:
+      - mysql
+      - eureka-service
+
+volumes:
+  mysql-data:
