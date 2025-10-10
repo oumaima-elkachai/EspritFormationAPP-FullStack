@@ -1,0 +1,13 @@
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 16px;
+}

@@ -1,0 +1,56 @@
+<div class="auth-container">
+  <div class="auth-content">
+    <div class="auth-card">
+      <div class="auth-header">
+        <img src="assets/layout/images/espritLogo.png" alt="Esprit Logo" class="app-logo">
+        <h1 class="auth-title">Welcome to Esprit</h1>
+        <p class="auth-subtitle">Sign in to your account</p>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        <i class="material-icons">error_outline</i>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+        <div class="floating-label-group">
+          <input type="email" id="email" name="email" [(ngModel)]="authRequest.email" required email #emailField="ngModel" placeholder=" ">
+          <label for="email">Email Address</label>
+          <div class="border-light"></div>
+          <div *ngIf="emailField.invalid && (emailField.dirty || emailField.touched)" class="validation-error">
+            <small *ngIf="emailField.errors?.['required']"></small>
+            <small *ngIf="emailField.errors?.['email']"></small>
+          </div>
+        </div>
+
+        <div class="floating-label-group">
+          <input [type]="hidePassword ? 'password' : 'text'" id="password" name="password" [(ngModel)]="authRequest.password" required #passwordField="ngModel" placeholder=" ">
+          <label for="password">Password</label>
+          <div class="border-light"></div>
+          <div *ngIf="passwordField.invalid && (passwordField.dirty || passwordField.touched)" class="validation-error">
+            <small *ngIf="passwordField.errors?.['required']"></small>
+          </div>
+        </div>
+
+        <div class="login-options">
+          <div class="remember-me">
+            <input type="checkbox" id="rememberMe" [(ngModel)]="rememberMe" name="rememberMe">
+            <label for="rememberMe">Remember me</label>
+          </div>
+          <button type="button" (click)="navigateToForgotPassword()" class="forgot-password-link">Forgot password?</button>
+        </div>
+
+        <button class="auth-button" type="submit" [disabled]="loginForm.invalid || isLoading" [class.success]="isSuccess">
+          <span *ngIf="!isLoading && !isSuccess">Sign In</span>
+          <span *ngIf="isLoading" class="loading-spinner"></span>
+          <span *ngIf="isSuccess">Success!</span>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <span>Don't have an account?</span>
+        <button type="button" (click)="navigateToRegister()" class="create-account-link">Create one</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,235 @@
+.landing-wrapper {
+  /* Allow children to overflow the wrapper */
+  overflow: visible !important;
+  position: relative; /* establish stacking context */
+  z-index: 1;
+}
+
+.user-dropdown {
+  position: relative; 
+  z-index: 50; /* sits above base content but below the menu */
+}
+
+.click-outside-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 100; /* below the menu but above everything else */
+}
+
+.dropdown-menu {
+  background-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  position: absolute;
+  right: 0;
+  top: calc(100% + 5px);
+  width: 200px;
+  overflow: hidden;
+  transform: translateZ(0); /* hardware‑accelerate */
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 200 !important; /* highest layer */
+
+  &.visible {
+    opacity: 1;
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: #495057;
+    text-decoration: none;
+
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    i {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+.badge-icon {
+  cursor: pointer;
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+.badge-icon:hover {
+  opacity: 0.8;
+}
+
+/* Add these styles to your component's CSS file */
+
+/* Dropdown styling */
+.dropdown-menu {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.dropdown-menu.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropdown-item {
+  text-decoration: none;
+  color: #333;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* For mobile responsiveness */
+@media (max-width: 991px) {
+  .dropdown-menu {
+    position: static !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding-left: 1rem;
+  }
+}
+
+
+/* Unified dropdown styling */
+.dropdown-menu {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  border: 1px solid #e4e4e4;
+}
+
+.dropdown-menu.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  font-size: 0.875rem;
+  padding: 0.75rem 1rem;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.dropdown-item i {
+  font-size: 1rem;
+  width: 1.25rem;
+  text-align: center;
+}
+
+/* Chevron animation */
+.applications-toggle i {
+  transition: transform 0.2s ease;
+}
+
+.applications-toggle:hover i,
+li:hover .applications-toggle i {
+  transform: translateY(2px);
+}
+
+/* For mobile responsiveness */
+@media (max-width: 991px) {
+  .dropdown-menu {
+    position: static !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding-left: 1rem;
+    border: none;
+    border-left: 2px solid #e0e0e0;
+  }
+  
+  .applications-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .applications-dropdown.visible {
+    max-height: 200px;
+  }
+}
+
+/* Unified dropdown styling */
+.dropdown-menu {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  border: 1px solid #e4e4e4;
+}
+
+.dropdown-menu.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  font-size: 0.875rem;
+  padding: 0.75rem 1rem;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.dropdown-item i {
+  font-size: 1rem;
+  width: 1.25rem;
+  text-align: center;
+}
+
+/* Chevron animation */
+.applications-toggle i {
+  transition: transform 0.2s ease;
+}
+
+.applications-toggle:hover i,
+li:hover .applications-toggle i {
+  transform: translateY(2px);
+}
+
+/* For mobile responsiveness */
+@media (max-width: 991px) {
+  .dropdown-menu {
+    position: static !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding-left: 1rem;
+    border: none;
+    border-left: 2px solid #e0e0e0;
+  }
+  
+  .applications-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .applications-dropdown.visible {
+    max-height: 200px;
+  }
+}

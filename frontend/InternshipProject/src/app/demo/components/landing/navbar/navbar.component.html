@@ -1,0 +1,157 @@
+<div class="surface-0 flex justify-content-center h-full">
+    <div id="home" class="landing-wrapper w-full h-full">
+  
+        <div class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3">
+            <!-- Logo - stays in place -->
+            <div class="flex-none">
+                <a (click)="navigateToLanding()" class="flex align-items-center">
+                    <img src="assets/layout/images/hackathonnetlogo.png" alt="Logo" height="50" class="mr-0 lg:mr-2">
+                </a>
+            </div>
+  
+            <!-- Mobile menu toggle button -->
+            <a pRipple class="cursor-pointer block lg:hidden text-700" pStyleClass="@next" enterClass="hidden" leaveToClass="hidden">
+                <i class="pi pi-bars text-4xl"></i>
+            </a>
+  
+            <!-- Navigation items - centered with more space -->
+            <div class="align-items-center surface-0 flex-grow-1 justify-content-center hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2" style="top:85%">
+                <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
+  
+                  <li>
+                    <a (click)="navigateToLanding()" pRipple class="flex m-0 md:mx-5 px-0 py-3 text-900 font-medium line-height-3">
+                        <span>Home</span>
+                    </a>
+                </li>
+  
+                    <li>
+                        <a (click)="router.navigate(['/landing-hackathons'], {fragment: 'hackathons'})" pRipple class="flex m-0 md:mx-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>Hackathons</span>
+                        </a>
+                    </li>
+                   
+                    <li>
+                        <a (click)="router.navigate(['/workshopsf'], {fragment: 'pricing'})" pRipple class="flex m-0 md:mx-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>Workshops</span>
+                        </a>
+                    </li>
+  
+                    <li>
+                        <a (click)="router.navigate(['/sponsors-leaderboard'], {fragment: 'pricing'})" pRipple class="flex m-0 md:mx-5 px-0 py-3 text-900 font-medium line-height-3">
+                            <span>Top Sponsors</span>
+                        </a>
+                    </li>
+  
+  
+  
+  
+                    <!-- Applications dropdown menu - only visible when authenticated -->
+                    <li *ngIf="isAuthenticated" class="relative">
+                        <a pRipple class="flex m-0 md:mx-5 px-0 py-3 text-900 font-medium line-height-3 cursor-pointer"
+                           (click)="applicationsMenuVisible = !applicationsMenuVisible">
+                            <span>Applications</span>
+                            <i class="pi pi-chevron-down ml-2"></i>
+                        </a>
+                        <!-- Applications dropdown -->
+                        <div *ngIf="applicationsMenuVisible" class="dropdown-menu absolute left-0 top-100 shadow-2 bg-white border-round-md w-15rem z-5 py-2"
+                             [ngClass]="{'visible': applicationsMenuVisible}" style="margin-top: 0.5rem; z-index: 1000;">
+                            <ul class="list-none p-0 m-0">
+                                <li>
+                                    <a (click)="viewOrCreateMentorApplication(); applicationsMenuVisible = false" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
+                                        <i class="pi pi-user-plus mr-2"></i>
+                                        <span>{{ isMentor ? 'My Mentor Application' : 'Apply as Mentor' }}</span>
+                                    </a>
+                                </li>
+                                <li *ngIf="!isSponsor">
+                                    <a (click)="router.navigate(['/sponsor-application-form'], {fragment: 'pricing'}); applicationsMenuVisible = false" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
+                                        <i class="pi pi-briefcase mr-2"></i>
+                                        <span>Apply as a sponsor</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+  
+                    <li>
+                      <a (click)="router.navigate(['/about'])" pRipple class="flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
+                          <span>About</span>
+                      </a>
+                  </li>
+  
+                </ul>
+            </div>
+  
+            <!-- User account section - stays in place -->
+            <div class="flex-none">
+                <!-- User account section with dropdown for authenticated users -->
+                <div *ngIf="isAuthenticated" class="flex align-items-center">
+                    <div class="user-dropdown flex align-items-center relative">
+                        <span class="mr-2">Hello, {{username}}</span>
+                        <button 
+                            pButton 
+                            pRipple 
+                            type="button" 
+                            icon="pi pi-user" 
+                            class="p-button-rounded p-button-text p-button-plain badge-icon"
+                            (click)="toggleUserMenu($event)">
+                        </button>
+                        <!-- Dropdown menu with higher z-index -->
+                        <div *ngIf="userMenuVisible" class="dropdown-menu user-dropdown-menu absolute right-0 top-100 shadow-2 bg-white border-round-md w-12rem z-5 py-2" [ngClass]="{'visible': userMenuVisible}" style="margin-top: 0.5rem; z-index: 1000;">
+                          <ul class="list-none p-0 m-0">
+                              <li>
+                                  <a [routerLink]="['/profile']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+                                     (click)="userMenuVisible = false">
+                                      <i class="pi pi-user mr-2"></i>
+                                      <span>Profile</span>
+                                  </a>
+                              </li>
+                              <!-- Add My prizes option only for sponsors -->
+                              <li *ngIf="isSponsor">
+                                  <a [routerLink]="['/sponsor-prizes']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+                                     (click)="userMenuVisible = false">
+                                     <i class="pi pi-tag mr-2"></i>
+                                      <span>My prizes</span>
+                                  </a>
+                              </li> 
+  
+                              <li *ngIf="isMentor">
+                                <a [routerLink]="['/mentor-evaluations-user']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+                                   (click)="userMenuVisible = false">
+                                    <i class="pi pi-list mr-2"></i>
+                                    <span>My evaluations</span>
+                                </a>
+                              </li>
+  
+                              <li>
+                                <a [routerLink]="['/ticket']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+                                   (click)="userMenuVisible = false">
+                                    <i class="pi pi-ticket mr-2"></i>
+                                    <span>Support Ticket</span>
+                                </a>
+                              </li>
+                              <li>
+                                <a [routerLink]="['/team-chat-hub']" class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer"
+                                   (click)="userMenuVisible = false">
+                                    <i class="pi pi-comments mr-2"></i>
+                                    <span>Team Chat Hub</span>
+                                </a>
+                              </li>
+                              <li>
+                                  <a (click)="logout(); userMenuVisible = false" 
+                                     class="dropdown-item flex align-items-center p-3 hover:surface-200 transition-colors transition-duration-150 cursor-pointer">
+                                      <i class="pi pi-sign-out mr-2"></i>
+                                      <span>Logout</span>
+                                  </a>
+                              </li>
+                          </ul>
+                      </div>
+                    </div>
+                </div>
+                <div *ngIf="!isAuthenticated" class="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
+                    <button pButton pRipple label="Login" [routerLink]="['/auth/login']" class="p-button-text p-button-rounded border-none font-light line-height-2 text-blue-500"></button>
+                    <button pButton pRipple label="Register" [routerLink]="['/auth/register']" class="p-button-rounded border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>

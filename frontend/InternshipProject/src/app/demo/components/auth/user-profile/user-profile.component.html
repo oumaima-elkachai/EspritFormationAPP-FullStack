@@ -1,0 +1,35 @@
+<div class="auth-container">
+  <div class="profile-card">
+    <div class="profile-header">
+      <img class="profile-avatar" [src]="user.avatar || 'assets/demo/images/avatar/default.png'" alt="User Avatar">
+      <h2 class="profile-name">{{ user.firstName }} {{ user.lastName }}</h2>
+      <p class="profile-role">{{ user.roleType }}</p>
+    </div>
+
+    <div class="profile-details">
+      <div class="detail-item">
+        <mat-icon class="detail-icon">email</mat-icon>
+        <span class="detail-text">{{ user.email }}</span>
+      </div>
+      
+      <div class="detail-item">
+        <mat-icon class="detail-icon">phone</mat-icon>
+        <span class="detail-text">{{ user.phoneNumber }}</span>
+      </div>
+      
+      <div class="detail-item">
+        <mat-icon class="detail-icon">location_on</mat-icon>
+        <span class="detail-text">{{ user.address }}</span>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <button mat-flat-button (click)="openEditDialog()">
+        <span>Edit Profile</span>
+      </button>
+      <button mat-flat-button (click)="logout()">
+        <span>Logout</span>
+      </button>
+    </div>
+  </div>
+</div>

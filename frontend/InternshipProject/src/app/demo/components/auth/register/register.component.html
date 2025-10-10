@@ -1,0 +1,85 @@
+<div class="auth-container">
+  <div class="auth-content">
+    <div class="auth-header">
+      <img src="assets/layout/images/espritLogo.png" alt="Esprit Logo" class="app-logo">
+      <h1 class="auth-title">Create Account</h1>
+      <p class="auth-subtitle">Join our community today</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      <i class="material-icons">error_outline</i>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+      <div class="form-row">
+        <div class="floating-label-group half-width">
+          <input type="text" id="firstName" [(ngModel)]="user.firstName" name="firstName" required #firstNameField="ngModel" placeholder=" ">
+          <label for="firstName">First Name</label>
+          <div class="border-light"></div>
+        </div>
+
+        <div class="floating-label-group half-width">
+          <input type="text" id="lastName" [(ngModel)]="user.lastName" name="lastName" required #lastNameField="ngModel" placeholder=" ">
+          <label for="lastName">Last Name</label>
+          <div class="border-light"></div>
+        </div>
+      </div>
+
+      <div class="floating-label-group">
+        <input type="email" id="email" [(ngModel)]="user.email" name="email" required email (blur)="checkEmail()" #emailField="ngModel" placeholder=" ">
+        <label for="email">Email Address</label>
+        <div class="border-light"></div>
+        <div *ngIf="emailError" class="validation-error">
+          <small>{{ emailError }}</small>
+        </div>
+      </div>
+
+      <div class="floating-label-group">
+        <input [type]="hidePassword ? 'password' : 'text'" id="password" [(ngModel)]="user.password" name="password" required #passwordField="ngModel" placeholder=" ">
+        <label for="password">Password</label>
+        <div class="border-light"></div>
+        <i class="material-icons toggle-password" (click)="hidePassword = !hidePassword">
+          {{ hidePassword ? 'visibility_off' : 'visibility' }}
+        </i>
+      </div>
+
+      <div class="floating-label-group">
+        <input type="text" id="phoneNumber" [(ngModel)]="user.phoneNumber" name="phoneNumber" (blur)="checkPhone()" #phoneField="ngModel" placeholder=" ">
+        <label for="phoneNumber">Phone Number</label>
+        <div class="border-light"></div>
+        <div *ngIf="phoneError" class="validation-error">
+          <small>{{ phoneError }}</small>
+        </div>
+      </div>
+
+      <div class="floating-label-group">
+        <input type="text" id="address" [(ngModel)]="user.address" name="address" #addressField="ngModel" placeholder=" ">
+        <label for="address">Address (Optional)</label>
+        <div class="border-light"></div>
+      </div>
+
+      <div class="terms-agreement">
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="agreeTerms" name="agreeTerms" required #termsField="ngModel">
+          <span class="checkmark"></span>
+          <span class="terms-text">I agree to the <a href="/terms" class="terms-link">Terms</a> and <a href="/privacy" class="terms-link">Privacy Policy</a></span>
+        </label>
+        <div *ngIf="termsField.invalid && termsField.touched" class="validation-error">
+          <small>You must accept the terms and conditions</small>
+        </div>
+      </div>
+      
+      <button class="auth-button" type="submit" [disabled]="registerForm.invalid || emailError || phoneError || isLoading" [class.success]="isSuccess">
+        <span *ngIf="!isLoading && !isSuccess">Create Account</span>
+        <span *ngIf="isLoading" class="loading-spinner"></span>
+        <span *ngIf="isSuccess">Success!</span>
+      </button>
+    </form>
+    
+    <div class="auth-footer">
+      <span>Already have an account?</span>
+      <button type="button" (click)="navigateToLogin()" class="create-account-link">Sign In</button>
+    </div>
+  </div>
+</div>
