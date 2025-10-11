@@ -1,7 +1,12 @@
-# Étape 1 : Build avec Maven
+# Étape 1 : Build avec Maven et cache des dépendances
 FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
+
+# Copier uniquement le pom.xml et télécharger les dépendances
 COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copier le code source et compiler
 COPY src ./src
 RUN mvn clean package -DskipTests
 
@@ -10,7 +15,7 @@ FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
-# Variables d'environnement pour Docker Compose
+# Variables d'environnement
 ENV SERVER_PORT=8761 \
     SPRING_APPLICATION_NAME=EurekaServer \
     EUREKA_CLIENT_REGISTER_WITH_EUREKA=false \
