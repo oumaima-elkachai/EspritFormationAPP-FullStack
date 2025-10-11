@@ -6,7 +6,7 @@ pipeline {
         SONAR_CREDENTIALS  = 'sonar-token'
         DOCKER_CREDENTIALS = 'dockerhub-credentials'
         SONAR_HOST = 'http://192.168.6.161:9000'
-        IMAGE_NAMESPACE    = 'oumaimaelkachai'  //le “namespace” ou le nom d’utilisateur DockerHub sous lequel tes images Docker seront construites et poussées             
+        IMAGE_NAMESPACE = 'oumaimaelkachai'
     }
 
     stages {
@@ -37,29 +37,26 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: "${SONAR_CREDENTIALS}", variable: 'SONAR_TOKEN')]) {
                     script {
-                        // Liste des services avec leurs chemins exacts
                         def services = [
-                            [name: "Eureka-Server", path: "Eureka-Server"],
-                            [name: "User-Service", path: "User-Service"],
-                            [name: "Formation-Service", path: "Formation-Service"]
+                            [name: "eureka-server", path: "Eureka-Server"],
+                            [name: "user-service", path: "User-Service"],
+                            [name: "formation-service", path: "Formation-Service"]
                         ]
-
 
                         for (s in services) {
                             dir("backend/stage-ete-main/${s.path}") {
                                 sh """
                                 mvn -B sonar:sonar \
-                                -Dsonar.projectKey=${s.name} \
-                                -Dsonar.host.url=${SONAR_HOST} \
-                                -Dsonar.token=${SONAR_TOKEN}
+                                  -Dsonar.projectKey=${s.name} \
+                                  -Dsonar.host.url=${SONAR_HOST} \
+                                  -Dsonar.token=${SONAR_TOKEN}
                                 """
                             }
                         }
                     }
                 }
             }
-}
-
+        }
 
         stage('Build Artifacts (.jar)') {
             steps {
@@ -86,10 +83,12 @@ pipeline {
 
                         def services = ["Eureka-Server", "User-Service", "Formation-Service"]
                         for (s in services) {
+                            def imageName = s.toLowerCase()  // <-- conversion en minuscule
                             sh """
-                            docker build -t $DOCKER_USER/${s}:${IMAGE_TAG} -t $DOCKER_USER/${s}:latest -f backend/stage-ete-main/${s}/Dockerfile backend/stage-ete-main/${s}
-                            docker push $DOCKER_USER/${s}:${IMAGE_TAG}
-                            docker push $DOCKER_USER/${s}:latest
+                            docker build -t $DOCKER_USER/${imageName}:${IMAGE_TAG} -t $DOCKER_USER/${imageName}:latest \
+                                -f backend/stage-ete-main/${s}/Dockerfile backend/stage-ete-main/${s}
+                            docker push $DOCKER_USER/${imageName}:${IMAGE_TAG}
+                            docker push $DOCKER_USER/${imageName}:latest
                             """
                         }
                     }
@@ -101,11 +100,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                    # Génère le fichier .env pour Docker Compose
                     echo "IMAGE_TAG=${IMAGE_TAG}" > backend/deploy/.env
                     echo "DOCKER_USER=${DOCKER_USER}" >> backend/deploy/.env
-
-                    # Déploiement
                     cd backend/deploy
                     docker-compose pull || true
                     docker-compose up -d --remove-orphans
