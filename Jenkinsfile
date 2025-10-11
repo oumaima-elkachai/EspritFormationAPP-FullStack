@@ -93,8 +93,8 @@ pipeline {
                     echo "IMAGE_TAG=${IMAGE_TAG}" > backend/stage-ete-main/deploy/.env
                     echo "DOCKER_USER=${DOCKER_USER}" >> backend/stage-ete-main/deploy/.env
                     cd backend/stage-ete-main/deploy
-                    docker-compose pull || true
-                    docker-compose up -d --remove-orphans
+                    docker compose pull || true
+                    docker compose up -d --remove-orphans
                     '''
                 }
             }
