@@ -1,6 +1,10 @@
 # Étape 1 : Build avec Maven
 FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
+
+# Debugging DNS resolution
+RUN nslookup repo.maven.apache.org || echo "DNS resolution failed"
+
 COPY pom.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
@@ -10,7 +14,6 @@ FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
-# Variables d'environnement pour Docker Compose
 ENV SERVER_PORT=8761 \
     SPRING_APPLICATION_NAME=EurekaServer \
     EUREKA_CLIENT_REGISTER_WITH_EUREKA=false \
