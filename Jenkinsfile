@@ -22,7 +22,6 @@ pipeline {
             steps {
                 script {
                     def services = ["Eureka-Server","User-Service","Formation-Service"]
-
                     for (s in services) {
                         dir("backend/stage-ete-main/${s}") {
                             echo "🔍 Running unit tests for ${s}"
@@ -42,7 +41,6 @@ pipeline {
                             [name: "user-service", path: "User-Service"],
                             [name: "formation-service", path: "Formation-Service"]
                         ]
-
                         for (s in services) {
                             dir("backend/stage-ete-main/${s.path}") {
                                 sh """
@@ -58,35 +56,26 @@ pipeline {
             }
         }
 
-        stage('Build Artifacts (.jar)') {
-            steps {
-                script {
-                    def services = ["Eureka-Server", "User-Service", "Formation-Service"]
-                    for (s in services) {
-                        dir("backend/stage-ete-main/${s}") {
-                            echo "⚙️ Building ${s}"
-                            sh 'mvn -B clean package -DskipTests'
-                        }
-                    }
-                }
-            }
-        }
-
         stage('Build & Push Docker Images') {
             steps {
                 script {
                     def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-                    env.IMAGE_TAG = "${commit}-${env.BUILD_NUMBER}"
+                    env.IMAGE_TAG = "${commit}-${env.BUILD_NUMBER}".toLowerCase()
 
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin'
 
                         def services = ["Eureka-Server", "User-Service", "Formation-Service"]
                         for (s in services) {
-                            def imageName = s.toLowerCase()  // <-- conversion en minuscule
+                            def imageName = s.toLowerCase()
                             sh """
-                            docker build -t $DOCKER_USER/${imageName}:${IMAGE_TAG} -t $DOCKER_USER/${imageName}:latest \
-                                -f backend/stage-ete-main/${s}/Dockerfile backend/stage-ete-main/${s}
+                            docker build \
+                              --build-arg MAVEN_OPTS='-Dmaven.repo.local=/root/.m2/repository' \
+                              -t $DOCKER_USER/${imageName}:${IMAGE_TAG} \
+                              -t $DOCKER_USER/${imageName}:latest \
+                              -f backend/stage-ete-main/${s}/Dockerfile \
+                              backend/stage-ete-main/${s}
+
                             docker push $DOCKER_USER/${imageName}:${IMAGE_TAG}
                             docker push $DOCKER_USER/${imageName}:latest
                             """
