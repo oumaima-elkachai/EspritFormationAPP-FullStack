@@ -1,10 +1,7 @@
-# Étape 1 : Build Maven avec cache des dépendances
+# Étape 1 : Build Maven
 FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
-
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
 COPY src ./src
 RUN mvn clean package -DskipTests
 
@@ -13,6 +10,7 @@ FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
+# Variables d'environnement
 ENV SERVER_PORT=8081 \
     SPRING_APPLICATION_NAME=Auth \
     SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/o?createDatabaseIfNotExist=true \
