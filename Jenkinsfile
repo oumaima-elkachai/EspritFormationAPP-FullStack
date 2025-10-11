@@ -7,6 +7,7 @@ pipeline {
         DOCKER_CREDENTIALS = 'dockerhub-credentials'
         SONAR_HOST = 'http://192.168.6.161:9000'
         IMAGE_NAMESPACE = 'oumaimaelkachai'
+        DOCKER_USER = '' // sera défini dynamiquement dans le pipeline
     }
 
     stages {
@@ -55,14 +56,16 @@ pipeline {
                 }
             }
         }
+
         stage('Build & Push Docker Images') {
             steps {
                 script {
                     def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
                     env.IMAGE_TAG = "${commit}-${env.BUILD_NUMBER}".toLowerCase()
 
-                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin'
+                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        env.DOCKER_USER = USER // <- définit DOCKER_USER globalement
+                        sh 'echo "$PASS" | docker login -u "$DOCKER_USER" --password-stdin'
 
                         def services = ["Eureka-Server", "User-Service", "Formation-Service"]
                         for (s in services) {
@@ -82,9 +85,7 @@ pipeline {
                     }
                 }
             }
-}
-
-
+        }
 
         stage('Deploy via Docker Compose') {
             steps {
