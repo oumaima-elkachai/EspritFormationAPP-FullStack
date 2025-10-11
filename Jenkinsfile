@@ -7,7 +7,6 @@ pipeline {
         DOCKER_CREDENTIALS = 'dockerhub-credentials'
         SONAR_HOST = 'http://192.168.6.161:9000'
         IMAGE_NAMESPACE = 'oumaimaelkachai'
-        DOCKER_USER = '' // sera défini dynamiquement dans le pipeline
     }
 
     stages {
@@ -64,7 +63,8 @@ pipeline {
                     env.IMAGE_TAG = "${commit}-${env.BUILD_NUMBER}".toLowerCase()
 
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        env.DOCKER_USER = USER // <- définit DOCKER_USER globalement
+                        echo "Docker login avec USER=${USER}"  // Débogage
+                        env.DOCKER_USER = USER
                         sh 'echo "$PASS" | docker login -u "$DOCKER_USER" --password-stdin'
 
                         def services = ["Eureka-Server", "User-Service", "Formation-Service"]
