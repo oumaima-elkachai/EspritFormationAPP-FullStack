@@ -99,13 +99,13 @@ pipeline {
         stage('Deploy via Docker Compose') {
             steps {
                 script {
-                    sh """
+                    sh '''
                     echo "IMAGE_TAG=${IMAGE_TAG}" > backend/deploy/.env
                     echo "DOCKER_USER=${DOCKER_USER}" >> backend/deploy/.env
                     cd backend/deploy
                     docker-compose pull || true
                     docker-compose up -d --remove-orphans
-                    """
+                    '''
                 }
             }
         }
