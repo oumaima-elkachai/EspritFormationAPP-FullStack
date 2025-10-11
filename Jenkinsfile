@@ -4,8 +4,9 @@ pipeline {
     environment {
         GITHUB_CREDENTIALS = 'github-token'
         SONAR_CREDENTIALS  = 'sonar-token'
+        DOCKER_CREDENTIALS = 'dockerhub-credentials'
         SONAR_HOST = 'http://192.168.6.161:9000'
-        IMAGE_NAMESPACE    = 'oumaimaelkachai'              
+        IMAGE_NAMESPACE    = 'oumaimaelkachai'  //le “namespace” ou le nom d’utilisateur DockerHub sous lequel tes images Docker seront construites et poussées             
     }
 
     stages {
