@@ -55,7 +55,6 @@ pipeline {
                 }
             }
         }
-
         stage('Build & Push Docker Images') {
             steps {
                 script {
@@ -69,22 +68,22 @@ pipeline {
                         for (s in services) {
                             def imageName = s.toLowerCase()
                             sh """
-                            docker build \
-                            --network host \                             
-                            --build-arg MAVEN_OPTS='-Dmaven.repo.local=/root/.m2/repository' \
-                            -t $DOCKER_USER/${imageName}:${IMAGE_TAG} \
-                            -t $DOCKER_USER/${imageName}:latest \
-                            -f backend/stage-ete-main/${s}/Dockerfile \
-                            backend/stage-ete-main/${s}
+                                docker build --network host \
+                                --build-arg MAVEN_OPTS='-Dmaven.repo.local=/root/.m2/repository' \
+                                -t $DOCKER_USER/${imageName}:${IMAGE_TAG} \
+                                -t $DOCKER_USER/${imageName}:latest \
+                                -f backend/stage-ete-main/${s}/Dockerfile \
+                                backend/stage-ete-main/${s}
 
-                            docker push $DOCKER_USER/${imageName}:${IMAGE_TAG}
-                            docker push $DOCKER_USER/${imageName}:latest
+                                docker push $DOCKER_USER/${imageName}:${IMAGE_TAG}
+                                docker push $DOCKER_USER/${imageName}:latest
                             """
                         }
                     }
                 }
             }
 }
+
 
 
         stage('Deploy via Docker Compose') {
