@@ -104,7 +104,7 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'backend/**/target/*.jar', fingerprint: true
+            archiveArtifacts artifacts: 'backend/stage-ete-main/**/target/*.jar', fingerprint: true
         }
     }
 }
