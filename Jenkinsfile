@@ -18,7 +18,7 @@ pipeline {
             }
         }
 
-        stage('Unit Tests') {
+        stage('Unit Tests Backend') {
             steps {
                 script {
                     def services = ["Eureka-Server","User-Service","Formation-Service"]
@@ -32,7 +32,7 @@ pipeline {
             }
         }
 
-        stage('Build JARs') {
+        stage('Build JARs Backend') {
             steps {
                 script {
                     def services = ["Eureka-Server","User-Service","Formation-Service"]
@@ -70,7 +70,7 @@ pipeline {
             }
         }
 
-        stage('Build & Push Docker Images') {
+        stage('Build & Push Docker Images Backend') {
             steps {
                 script {
                     def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
@@ -95,6 +95,28 @@ pipeline {
                                 docker push $DOCKER_USER/${imageName}:${IMAGE_TAG}
                                 docker push $DOCKER_USER/${imageName}:latest
                             """
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Frontend Angular & Push Docker Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        echo "Docker login avec USER=${USER}"  
+                        sh 'echo "$PASS" | docker login -u "$USER" --password-stdin'
+
+                        dir('frontend/InternshipProject') {
+                            echo "🔧 Building Angular frontend"
+                            sh '''
+                                npm install
+                                npm run build --prod
+                                docker build -t $USER/frontend:${IMAGE_TAG} -t $USER/frontend:latest .
+                                docker push $USER/frontend:${IMAGE_TAG}
+                                docker push $USER/frontend:latest
+                            '''
                         }
                     }
                 }

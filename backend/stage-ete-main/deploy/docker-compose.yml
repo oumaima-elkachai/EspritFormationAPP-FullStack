@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   mysql:
     image: mysql:8.0
@@ -69,6 +71,18 @@ services:
     depends_on:
       - mysql
       - eureka-service
+
+  frontend:
+    image: "${DOCKER_USER:-oumaimakachai}/frontend:${IMAGE_TAG:-latest}"
+    container_name: frontend
+    build:
+      context: ../../../frontend/InternshipProject
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - user-service
+      - formation-service
 
 volumes:
   mysql-data:
