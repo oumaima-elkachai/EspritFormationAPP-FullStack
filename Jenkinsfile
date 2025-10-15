@@ -1,4 +1,4 @@
-pipeline {
+pipeline { 
     agent any
 
     environment {
@@ -26,6 +26,20 @@ pipeline {
                         dir("backend/stage-ete-main/${s}") {
                             echo "🔍 Running unit tests for ${s}"
                             sh 'mvn -B clean test'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build JARs') {
+            steps {
+                script {
+                    def services = ["Eureka-Server","User-Service","Formation-Service"]
+                    for (s in services) {
+                        dir("backend/stage-ete-main/${s}") {
+                            echo "📦 Building JAR for ${s}"
+                            sh 'mvn -B package -DskipTests'
                         }
                     }
                 }
@@ -63,7 +77,7 @@ pipeline {
                     env.IMAGE_TAG = "${commit}-${env.BUILD_NUMBER}".toLowerCase()
 
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        echo "Docker login avec USER=${USER}"  // Débogage
+                        echo "Docker login avec USER=${USER}"  
                         env.DOCKER_USER = "oumaimakachai"
                         sh 'echo "$PASS" | docker login -u "$DOCKER_USER" --password-stdin'
 
