@@ -14,7 +14,7 @@ services:
       - mysql-data:/var/lib/mysql
 
   eureka-service:
-    image: "${DOCKER_USER:-oumaimaelkachai}/eureka-service:${IMAGE_TAG:-latest}"
+    image: "${DOCKER_USER:-oumaimakachai}/eureka-server:${IMAGE_TAG:-latest}"
     container_name: eureka-service
     ports:
       - "8761:8761"
@@ -27,7 +27,7 @@ services:
       - mysql
 
   formation-service:
-    image: "${DOCKER_USER:-oumaimaelkachai}/formation-service:${IMAGE_TAG:-latest}"
+    image: "${DOCKER_USER:-oumaimakachai}/formation-service:${IMAGE_TAG:-latest}"
     container_name: formation-service
     ports:
       - "9094:9094"
@@ -46,7 +46,7 @@ services:
       - eureka-service
 
   user-service:
-    image: "${DOCKER_USER:-oumaimaelkachai}/user-service:${IMAGE_TAG:-latest}"
+    image: "${DOCKER_USER:-oumaimakachai}/user-service:${IMAGE_TAG:-latest}"
     container_name: user-service
     ports:
       - "8081:8081"

@@ -6,7 +6,7 @@ pipeline {
         SONAR_CREDENTIALS  = 'sonar-token'
         DOCKER_CREDENTIALS = 'dockerhub-credentials'
         SONAR_HOST = 'http://192.168.6.161:9000'
-        IMAGE_NAMESPACE = 'oumaimaelkachai'
+        IMAGE_NAMESPACE = 'oumaimakachai'
     }
 
     stages {
@@ -64,7 +64,7 @@ pipeline {
 
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                         echo "Docker login avec USER=${USER}"  // Débogage
-                        env.DOCKER_USER = USER
+                        env.DOCKER_USER = "oumaimakachai"
                         sh 'echo "$PASS" | docker login -u "$DOCKER_USER" --password-stdin'
 
                         def services = ["Eureka-Server", "User-Service", "Formation-Service"]
