@@ -126,7 +126,7 @@ pipeline {
                 script {
                     sh '''
                     echo "🚀 Déploiement Kubernetes..."
-                    cd backend/stage-ete-main/deploy/k8s
+                    cd backend/stage-ete-main/deploy
 
                     # Créer le namespace s’il n’existe pas
                     kubectl get ns esprit-formation || kubectl create ns esprit-formation
