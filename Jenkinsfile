@@ -1,4 +1,4 @@
-pipeline {
+pipeline { 
     agent any
 
     environment {
@@ -77,7 +77,8 @@ pipeline {
                     env.IMAGE_TAG = "${commit}-${env.BUILD_NUMBER}".toLowerCase()
 
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        env.DOCKER_USER = "${IMAGE_NAMESPACE}"
+                        echo "Docker login avec USER=${USER}"  
+                        env.DOCKER_USER = "oumaimakachai"
                         sh 'echo "$PASS" | docker login -u "$DOCKER_USER" --password-stdin'
 
                         def services = ["Eureka-Server", "User-Service", "Formation-Service"]
@@ -85,6 +86,7 @@ pipeline {
                             def imageName = s.toLowerCase()
                             sh """
                                 docker build --network host \
+                                --build-arg MAVEN_OPTS='-Dmaven.repo.local=/root/.m2/repository' \
                                 -t $DOCKER_USER/${imageName}:${IMAGE_TAG} \
                                 -t $DOCKER_USER/${imageName}:latest \
                                 -f backend/stage-ete-main/${s}/Dockerfile \
@@ -103,6 +105,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        echo "Docker login avec USER=${USER}"  
                         sh 'echo "$PASS" | docker login -u "$USER" --password-stdin'
 
                         dir('frontend/InternshipProject') {
@@ -120,27 +123,15 @@ pipeline {
             }
         }
 
-        // 🧩 Nouveau stage : Déploiement Kubernetes
-        stage('Deploy on Kubernetes') {
+        stage('Deploy via Docker Compose') {
             steps {
                 script {
                     sh '''
-                    echo "🚀 Déploiement Kubernetes..."
+                    echo "IMAGE_TAG=${IMAGE_TAG}" > backend/stage-ete-main/deploy/.env
+                    echo "DOCKER_USER=${DOCKER_USER}" >> backend/stage-ete-main/deploy/.env
                     cd backend/stage-ete-main/deploy
-
-                    # Créer le namespace s’il n’existe pas
-                    kubectl get ns esprit-formation || kubectl create ns esprit-formation
-
-                    # Appliquer les manifests
-                    kubectl apply -k .
-
-                    # Mettre à jour les images avec le nouveau tag
-                    kubectl set image deployment/eureka-server eureka-server=${IMAGE_NAMESPACE}/eureka-server:${IMAGE_TAG} -n esprit-formation || true
-                    kubectl set image deployment/user-service user-service=${IMAGE_NAMESPACE}/user-service:${IMAGE_TAG} -n esprit-formation || true
-                    kubectl set image deployment/formation-service formation-service=${IMAGE_NAMESPACE}/formation-service:${IMAGE_TAG} -n esprit-formation || true
-                    kubectl set image deployment/frontend frontend=${IMAGE_NAMESPACE}/frontend:${IMAGE_TAG} -n esprit-formation || true
-
-                    kubectl rollout status deployment/frontend -n esprit-formation
+                    docker compose pull || true
+                    docker compose up -d --remove-orphans
                     '''
                 }
             }

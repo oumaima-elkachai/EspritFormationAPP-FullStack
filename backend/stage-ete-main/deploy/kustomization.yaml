@@ -1,7 +1,0 @@
-resources:
-  - namespace.yaml
-  - mysql-deployment.yaml
-  - eureka-deployment.yaml
-  - user-deployment.yaml
-  - formation-deployment.yaml
-  - frontend-deployment.yaml
