@@ -8,8 +8,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: o
-      MYSQL_USER: root
-      MYSQL_PASSWORD: ""
+      MYSQL_USER: esprituser
+      MYSQL_PASSWORD: user
     ports:
       - "3307:3306"
     volumes:
