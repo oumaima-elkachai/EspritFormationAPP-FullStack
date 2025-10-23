@@ -57,7 +57,7 @@ services:
     container_name: user-service
     restart: always
     ports:
-      - "8081:8081"
+      - "8082:8081"
     environment:
       - SPRING_APPLICATION_NAME=Auth
       - SERVER_PORT=8081
